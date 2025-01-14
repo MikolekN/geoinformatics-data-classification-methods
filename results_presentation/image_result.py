@@ -1,3 +1,4 @@
+import os
 from dataclasses import asdict, dataclass
 from PIL import Image
 
@@ -31,17 +32,17 @@ class ImageResult:
         width, height = image.size
         return cls(
             id=data["id"],
-            original_path=data["original_path"],
+            original_path=data["original_path"].replace(os.sep, "/"),
             is_high_resolution=data["is_high_resolution"],
             is_ai_generated=data["is_ai_generated"],
             is_gauss_noise=data["is_gauss_noise"],
             is_salt_and_pepper_noise=data["is_salt_and_pepper_noise"],
-            roberts_path=data["roberts_path"],
-            prewitt_path=data["prewitt_path"],
-            sobel_path=data["sobel_path"],
-            robinson_path=data["robinson_path"],
-            laplace_path=data["laplace_path"],
-            canny_path=data["canny_path"],
+            roberts_path=data["roberts_path"].replace(os.sep, "/"),
+            prewitt_path=data["prewitt_path"].replace(os.sep, "/"),
+            sobel_path=data["sobel_path"].replace(os.sep, "/"),
+            robinson_path=data["robinson_path"].replace(os.sep, "/"),
+            laplace_path=data["laplace_path"].replace(os.sep, "/"),
+            canny_path=data["canny_path"].replace(os.sep, "/"),
             time_roberts=data["time_roberts"],
             time_prewitt=data["time_prewitt"],
             time_sobel=data["time_sobel"],
