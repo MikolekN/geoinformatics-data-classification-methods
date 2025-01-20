@@ -3,7 +3,7 @@ from image_result import ImageResult
 
 RESULTS_JSON_PATH = 'results.json'
 OUTPUT_HTML_FILE = 'output.html'
-GALLERY_TEMPLATE_FILE = 'output_template.html'
+GALLERY_TEMPLATE_FILE = 'template/output_template.html'
 
 def generate_gallery(results: list[ImageResult]):
     image_rows = ""
