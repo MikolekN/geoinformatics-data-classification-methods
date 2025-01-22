@@ -57,9 +57,3 @@ def process_images(input_folder, output_folder):
             low_res_gauss_image = apply_gaussian_noise(low_res_image)
             cv2.imwrite(os.path.join(output_folder, f"{file_id}_low_res_gauss.jpg"), low_res_gauss_image)
 
-# Define input and output folders
-folders = ["photos/mountain", "photos/forest"]
-output_base_folder = "processed_images"
-
-for folder in folders:
-    process_images(folder, os.path.join(output_base_folder, folder))

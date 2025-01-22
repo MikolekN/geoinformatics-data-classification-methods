@@ -56,10 +56,10 @@ def run():
             results.append(image_result.ImageResult(
                 id=image_id,
                 original_path=img_original_path,
-                is_high_resolution=False,  # Placeholder
-                is_ai_generated=False,  # Placeholder
-                is_gauss_noise=False,  # Placeholder
-                is_salt_and_pepper_noise=False,  # Placeholder
+                is_high_resolution="high_res" in img_name,
+                is_ai_generated = "ai" in img_name,
+                is_gauss_noise = "gauss" in img_name,
+                is_salt_and_pepper_noise = "snp" in img_name,
                 roberts_path=paths["roberts"],
                 prewitt_path=paths["prewitt"],
                 sobel_path=paths["sobel"],
