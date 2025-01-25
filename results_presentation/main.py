@@ -1,7 +1,11 @@
 import json
 import os
-from image_result import ImageResult
 
+import cv2
+
+from image_result import ImageResult
+import numpy as np
+from skimage.metrics import structural_similarity as ssim
 
 RESULTS_JSON_PATH = os.path.join('..', 'output', 'results.json')
 OUTPUT_HTML_FILE = 'output.html'
@@ -213,6 +217,89 @@ def generate_chart_html(times: dict) -> str:
 
     return chart_html
 
+def mse(image1, image2):
+    return np.mean((image1 - image2) ** 2)
+
+def psnr(image1, image2, max_pixel=255):
+    mse_value = mse(image1, image2)
+    if mse_value == 0:
+        return 100
+    return 20 * np.log10(max_pixel / np.sqrt(mse_value))
+
+def calculate_ssim(image1, image2):
+    return ssim(image1, image2)
+
+
+def generate_comparison_results(results):
+    comparison_results = {
+        "roberts": {"mse": [], "psnr": [], "ssim": []},
+        "prewitt": {"mse": [], "psnr": [], "ssim": []},
+        "sobel": {"mse": [], "psnr": [], "ssim": []},
+        "robinson": {"mse": [], "psnr": [], "ssim": []},
+        "laplace": {"mse": [], "psnr": [], "ssim": []}
+    }
+
+    for result in results:
+        canny_image = load_image(result.canny_path)
+
+        for algorithm in comparison_results.keys():
+            algorithm_image = load_image(getattr(result, f"{algorithm}_path"))
+
+            mse_value = mse(algorithm_image, canny_image)
+            psnr_value = psnr(algorithm_image, canny_image)
+            ssim_value = calculate_ssim(algorithm_image, canny_image)
+
+            comparison_results[algorithm]["mse"].append(mse_value)
+            comparison_results[algorithm]["psnr"].append(psnr_value)
+            comparison_results[algorithm]["ssim"].append(ssim_value)
+
+    avg_comparison_results = {}
+    for algorithm, values in comparison_results.items():
+        avg_comparison_results[algorithm] = {
+            "mse": np.mean(values["mse"]),
+            "psnr": np.mean(values["psnr"]),
+            "ssim": np.mean(values["ssim"])
+        }
+
+    return avg_comparison_results
+
+def load_image(image_path):
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    return image
+
+
+def generate_comparison_html(comparison_results):
+    html_content = """
+    <h2>Porównanie algorytmów z Canny</h2>
+    <table class="comparison">
+        <thead>
+            <tr>
+                <th class="header">Algorytm</th>
+                <th class="header">MSE</th>
+                <th class="header">PSNR</th>
+                <th class="header">SSIM</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+
+    for algorithm, results in comparison_results.items():
+        html_content += f"""
+        <tr>
+            <td>{algorithm.capitalize()}</td>
+            <td class="mse">{results['mse']:.5f}</td>
+            <td class="psnr">{results['psnr']:.5f}</td>
+            <td class="ssim">{results['ssim']:.5f}</td>
+        </tr>
+        """
+
+    html_content += """
+        </tbody>
+    </table>
+    """
+
+    return html_content
+
 def generate_results_html(results: list[ImageResult]):
     with open(GALLERY_TEMPLATE_FILE, 'r', encoding="utf-8") as template_file:
         html_template = template_file.read()
@@ -230,6 +317,12 @@ def generate_results_html(results: list[ImageResult]):
 
     avg_times_per_type = generate_average_times_per_image_type(results)
     html_content = html_content.replace("{{chart_all}}", generate_chart_html(avg_times_per_type))
+
+    COMPARISON = True
+    if COMPARISON:
+        comparison_results = generate_comparison_results(results)
+        comparison_html = generate_comparison_html(comparison_results)
+        html_content = html_content.replace("{{comparison}}", comparison_html)
 
     with open(OUTPUT_HTML_FILE, "w") as file:
                 file.write(html_content)

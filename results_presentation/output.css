@@ -168,3 +168,74 @@ li {
     padding: 5px;
     border-radius: 3px;
 }
+
+table.comparison {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table.comparison th,
+table.comparison td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease-in-out;
+}
+
+table.comparison th {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+table.comparison td {
+    background-color: #f9f9f9;
+    font-size: 1em;
+    color: #333;
+}
+
+table.comparison tr:nth-child(even) td {
+    background-color: #f1f1f1;
+}
+
+table.comparison tr:hover td {
+    background-color: #e8f5e9;
+}
+
+table.comparison th, table.comparison td {
+    border-bottom: 2px solid #ddd;
+}
+
+table.comparison th {
+    border-top: 2px solid #ddd;
+}
+
+table.comparison {
+    margin: 30px 0;
+}
+
+table.comparison td.mse,
+table.comparison td.psnr,
+table.comparison td.ssim {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #555;
+}
+
+table.comparison td.psnr {
+    color: #333;
+}
+
+table.comparison td.psnr[data-value="high"] {
+    color: green;
+}
+
+table.comparison td.psnr[data-value="low"] {
+    color: red;
+}
