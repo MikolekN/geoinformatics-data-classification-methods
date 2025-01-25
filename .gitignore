@@ -170,8 +170,10 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+edge_detection/input_old
 edge_detection/input
 edge_detection/output
+edge_detection/image_preprocess/photos
 .idea
 
 output/
