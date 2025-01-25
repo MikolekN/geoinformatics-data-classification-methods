@@ -4,7 +4,7 @@ from edge_detection import edge_detection
 from image_preprocess.process_images import process_images
 
 folders = ["mountain", "forest"]
-subfolder = "image_preprocess/photos/"
+subfolder = "image_preprocess/photos"
 output_base_folder = "input"
 
 if __name__ == "__main__":

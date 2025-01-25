@@ -32,19 +32,19 @@ def apply_filter(filter_name, filter_func, img, paths):
 
 def run():
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    BASE_DIR = os.path.join("..")
+    BASE_DIR = os.path.join(".")
     json_dump_path = os.path.join("output")
     image_id = 0
     results = []
-    input_path = os.path.join(BASE_DIR, "process_images", "processed_images", "photos")
+    input_path = os.path.join(BASE_DIR, "input")
     input_dirs = os.listdir(input_path)
     for input_dir in input_dirs:
-        input_path = os.path.join(BASE_DIR, "process_images", "processed_images", "photos", input_dir)
+        input_path = os.path.join(BASE_DIR, "input", input_dir)
         images = [f for f in listdir(input_path) if isfile(join(input_path, f))]
         for image in images:
 
             image_id += 1
-            img_original_path = os.path.join(input_path, image)
+            img_original_path = os.path.join("..", "edge_detection", "input", input_dir, image)
             img_name = image
 
             paths = {"img": os.path.join(input_path, img_name),
@@ -86,6 +86,6 @@ def run():
                 height=height
             ))
 
-    output_json_path = os.path.join(BASE_DIR, json_dump_path, "results.json")
+    output_json_path = os.path.join("..", json_dump_path, "results.json")
     with open(output_json_path, "w") as json_file:
         json.dump([result.to_dict() for result in results], json_file, indent=4)
