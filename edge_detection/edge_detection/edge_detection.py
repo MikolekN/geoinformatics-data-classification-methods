@@ -7,6 +7,7 @@ from . import image_result
 import cv2 as cv
 import json
 
+NUMBER_OF_ITERATIONS_FOR_T_MEASUREMENT = 10
 
 def save_after_filter(path, img, name, time):
     cv.imwrite(path, img)
@@ -16,20 +17,29 @@ def save_after_filter(path, img, name, time):
 
 def apply_filter(filter_name, filter_func, img, paths):
     start = time.monotonic()
-    filtered_img = filter_func(img)
+    for i in range(NUMBER_OF_ITERATIONS_FOR_T_MEASUREMENT):
+        filtered_img = filter_func(img)
     end = time.monotonic()
     execution_time = end - start
+    start = time.monotonic()
+    for i in range(NUMBER_OF_ITERATIONS_FOR_T_MEASUREMENT):
+        continue
+    end = time.monotonic()
+    execution_time = execution_time - (end - start)
     save_after_filter(paths[filter_name], filtered_img, filter_name, execution_time)
     return execution_time
 
 
 def run():
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    BASE_DIR = os.path.join("..")
+    json_dump_path = os.path.join("output")
     image_id = 0
     results = []
-    input_dirs = ["forest", "mountain"]
+    input_path = os.path.join(BASE_DIR, "process_images", "processed_images", "photos")
+    input_dirs = os.listdir(input_path)
     for input_dir in input_dirs:
-        input_path = os.path.join(BASE_DIR, "input", input_dir)
+        input_path = os.path.join(BASE_DIR, "process_images", "processed_images", "photos", input_dir)
         images = [f for f in listdir(input_path) if isfile(join(input_path, f))]
         for image in images:
 
@@ -76,6 +86,6 @@ def run():
                 height=height
             ))
 
-            output_json_path = os.path.join(BASE_DIR, paths["json_dump"], "results.json")
-            with open(output_json_path, "w") as json_file:
-                json.dump([result.to_dict() for result in results], json_file, indent=4)
+    output_json_path = os.path.join(BASE_DIR, json_dump_path, "results.json")
+    with open(output_json_path, "w") as json_file:
+        json.dump([result.to_dict() for result in results], json_file, indent=4)

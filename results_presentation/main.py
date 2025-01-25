@@ -1,7 +1,9 @@
 import json
+import os
 from image_result import ImageResult
 
-RESULTS_JSON_PATH = 'results.json'
+
+RESULTS_JSON_PATH = os.path.join('..', 'output', 'results.json')
 OUTPUT_HTML_FILE = 'output.html'
 GALLERY_TEMPLATE_FILE = 'template/output_template.html'
 

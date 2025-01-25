@@ -175,3 +175,5 @@ edge_detection/output
 .idea
 
 output/
+process_images/processed_images
+process_images/photos
