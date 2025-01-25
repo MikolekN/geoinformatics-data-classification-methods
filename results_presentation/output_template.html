@@ -22,7 +22,10 @@
 
     <!-- GALERIA ZDJĘĆ -->
     <h1>Galeria zdjęć</h1>
-    <table class="gallery">
+    <div id="toggleButtonContainer">
+        <button id="toggleButton" onclick="toggleGallery()">Otwórz Galerię</button>
+    </div>
+    <table id="galleryTable" class="gallery" style="display: none;">
         <tr>
             <th class="header"></th>
             <th class="header">Original</th>
@@ -56,6 +59,19 @@
             var modal = document.getElementById("myModal");
             if (event.target == modal) {
                 modal.style.display = "none";
+            }
+        }
+
+        function toggleGallery() {
+            var galleryTable = document.getElementById("galleryTable");
+            var button = document.getElementById("toggleButton");
+
+            if (galleryTable.style.display === "none") {
+                galleryTable.style.display = "table";
+                button.textContent = "Zamknij Galerię";
+            } else {
+                galleryTable.style.display = "none";
+                button.textContent = "Otwórz Galerię";
             }
         }
     </script>

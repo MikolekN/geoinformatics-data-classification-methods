@@ -7,7 +7,7 @@ from . import image_result
 import cv2 as cv
 import json
 
-NUMBER_OF_ITERATIONS_FOR_T_MEASUREMENT = 10
+NUMBER_OF_ITERATIONS_FOR_T_MEASUREMENT = 100
 
 def save_after_filter(path, img, name, time):
     cv.imwrite(path, img)
@@ -87,5 +87,6 @@ def run():
             ))
 
     output_json_path = os.path.join("..", json_dump_path, "results.json")
+    os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
     with open(output_json_path, "w") as json_file:
         json.dump([result.to_dict() for result in results], json_file, indent=4)
