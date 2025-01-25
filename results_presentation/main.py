@@ -54,6 +54,165 @@ def calculate_average_times(results: list[ImageResult]) -> dict:
 
     return average_results
 
+
+def generate_average_times_per_image_type(results: list[ImageResult]) -> dict:
+    avg_times_per_type = {
+        'original': {'time_roberts': 0, 'time_prewitt': 0, 'time_sobel': 0, 'time_robinson': 0, 'time_laplace': 0,
+                     'time_canny': 0},
+        'gauss_noise': {'time_roberts': 0, 'time_prewitt': 0, 'time_sobel': 0, 'time_robinson': 0, 'time_laplace': 0,
+                        'time_canny': 0},
+        'salt_and_pepper_noise': {'time_roberts': 0, 'time_prewitt': 0, 'time_sobel': 0, 'time_robinson': 0,
+                                  'time_laplace': 0, 'time_canny': 0},
+        'low_resolution': {'time_roberts': 0, 'time_prewitt': 0, 'time_sobel': 0, 'time_robinson': 0, 'time_laplace': 0,
+                           'time_canny': 0},
+    }
+
+    for result in results:
+        if result.is_gauss_noise:
+            avg_times_per_type['gauss_noise']['time_roberts'] += result.time_roberts
+            avg_times_per_type['gauss_noise']['time_prewitt'] += result.time_prewitt
+            avg_times_per_type['gauss_noise']['time_sobel'] += result.time_sobel
+            avg_times_per_type['gauss_noise']['time_robinson'] += result.time_robinson
+            avg_times_per_type['gauss_noise']['time_laplace'] += result.time_laplace
+            avg_times_per_type['gauss_noise']['time_canny'] += result.time_canny
+        elif result.is_salt_and_pepper_noise:
+            avg_times_per_type['salt_and_pepper_noise']['time_roberts'] += result.time_roberts
+            avg_times_per_type['salt_and_pepper_noise']['time_prewitt'] += result.time_prewitt
+            avg_times_per_type['salt_and_pepper_noise']['time_sobel'] += result.time_sobel
+            avg_times_per_type['salt_and_pepper_noise']['time_robinson'] += result.time_robinson
+            avg_times_per_type['salt_and_pepper_noise']['time_laplace'] += result.time_laplace
+            avg_times_per_type['salt_and_pepper_noise']['time_canny'] += result.time_canny
+        elif result.is_high_resolution:
+            avg_times_per_type['original']['time_roberts'] += result.time_roberts
+            avg_times_per_type['original']['time_prewitt'] += result.time_prewitt
+            avg_times_per_type['original']['time_sobel'] += result.time_sobel
+            avg_times_per_type['original']['time_robinson'] += result.time_robinson
+            avg_times_per_type['original']['time_laplace'] += result.time_laplace
+            avg_times_per_type['original']['time_canny'] += result.time_canny
+        elif not result.is_high_resolution:
+            avg_times_per_type['low_resolution']['time_roberts'] += result.time_roberts
+            avg_times_per_type['low_resolution']['time_prewitt'] += result.time_prewitt
+            avg_times_per_type['low_resolution']['time_sobel'] += result.time_sobel
+            avg_times_per_type['low_resolution']['time_robinson'] += result.time_robinson
+            avg_times_per_type['low_resolution']['time_laplace'] += result.time_laplace
+            avg_times_per_type['low_resolution']['time_canny'] += result.time_canny
+
+    num_results = len(results)
+    for image_type, times in avg_times_per_type.items():
+        for key in times:
+            times[key] /= num_results
+
+    return avg_times_per_type
+
+def generate_chart_html(times: dict) -> str:
+    chart_data = {
+        "labels": ['Roberts', 'Prewitt', 'Sobel', 'Robinson', 'Laplace', 'Canny'],  # Algorytmy
+        "datasets": [
+            {
+                "label": 'Oryginalne zdjęcia',
+                "data": [
+                    times['original']['time_roberts'],
+                    times['original']['time_prewitt'],
+                    times['original']['time_sobel'],
+                    times['original']['time_robinson'],
+                    times['original']['time_laplace'],
+                    times['original']['time_canny']
+                ],
+                "backgroundColor": 'rgba(54, 162, 235, 0.2)',
+                "borderColor": 'rgba(54, 162, 235, 1)',
+                "borderWidth": 1
+            },
+            {
+                "label": 'Zdjęcia z szumem Gaussa',
+                "data": [
+                    times['gauss_noise']['time_roberts'],
+                    times['gauss_noise']['time_prewitt'],
+                    times['gauss_noise']['time_sobel'],
+                    times['gauss_noise']['time_robinson'],
+                    times['gauss_noise']['time_laplace'],
+                    times['gauss_noise']['time_canny']
+                ],
+                "backgroundColor": 'rgba(255, 99, 132, 0.2)',
+                "borderColor": 'rgba(255, 99, 132, 1)',
+                "borderWidth": 1
+            },
+            {
+                "label": 'Zdjęcia z szumem solnym i pieprzowym',
+                "data": [
+                    times['salt_and_pepper_noise']['time_roberts'],
+                    times['salt_and_pepper_noise']['time_prewitt'],
+                    times['salt_and_pepper_noise']['time_sobel'],
+                    times['salt_and_pepper_noise']['time_robinson'],
+                    times['salt_and_pepper_noise']['time_laplace'],
+                    times['salt_and_pepper_noise']['time_canny']
+                ],
+                "backgroundColor": 'rgba(75, 192, 192, 0.2)',
+                "borderColor": 'rgba(75, 192, 192, 1)',
+                "borderWidth": 1
+            },
+            {
+                "label": 'Zdjęcia o niskiej rozdzielczości',
+                "data": [
+                    times['low_resolution']['time_roberts'],
+                    times['low_resolution']['time_prewitt'],
+                    times['low_resolution']['time_sobel'],
+                    times['low_resolution']['time_robinson'],
+                    times['low_resolution']['time_laplace'],
+                    times['low_resolution']['time_canny']
+                ],
+                "backgroundColor": 'rgba(153, 102, 255, 0.2)',
+                "borderColor": 'rgba(153, 102, 255, 1)',
+                "borderWidth": 1
+            }
+        ]
+    }
+
+    chart_html = f"""
+    <div style="width: 80%; margin: 0 auto;">
+        <canvas id="chart_{times.get('type', 'chart')}"></canvas>
+    </div>
+
+    <script>
+        var ctx = document.getElementById('chart_{times.get('type', 'chart')}').getContext('2d');
+        var chart = new Chart(ctx, {{
+            type: 'bar',
+            data: {chart_data},
+            options: {{
+                scales: {{
+                    y: {{
+                        beginAtZero: true,
+                        ticks: {{
+                            callback: function(value, index, values) {{
+                                return value.toFixed(5);
+                            }}
+                        }}
+                    }}
+                }},
+                plugins: {{
+                    tooltip: {{
+                        callbacks: {{
+                            label: function(tooltipItem) {{
+                                return tooltipItem.raw.toFixed(5) + " sec";
+                            }}
+                        }}
+                    }}
+                }},
+                responsive: true,
+                scales: {{
+                    x: {{
+                        stacked: true
+                    }},
+                    y: {{
+                        stacked: true
+                    }}
+                }}
+            }}
+        }});
+    </script>
+    """
+
+    return chart_html
+
 def generate_results_html(results: list[ImageResult]):
     with open(GALLERY_TEMPLATE_FILE, 'r', encoding="utf-8") as template_file:
         html_template = template_file.read()
@@ -69,8 +228,11 @@ def generate_results_html(results: list[ImageResult]):
     html_content = html_content.replace("{{time_laplace}}", str(avg_times['time_laplace']))
     html_content = html_content.replace("{{time_canny}}", str(avg_times['time_canny']))
 
+    avg_times_per_type = generate_average_times_per_image_type(results)
+    html_content = html_content.replace("{{chart_all}}", generate_chart_html(avg_times_per_type))
+
     with open(OUTPUT_HTML_FILE, "w") as file:
-        file.write(html_content)
+                file.write(html_content)
 
 
 def load_results(json_file: str) -> list[ImageResult]:
