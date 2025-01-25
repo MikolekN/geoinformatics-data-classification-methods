@@ -88,7 +88,7 @@
             data: {
                 labels: ['Roberts', 'Prewitt', 'Sobel', 'Robinson', 'Laplace', 'Canny'],
                 datasets: [{
-                    label: 'Normalized Time (seconds per pixel)',
+                    label: 'Średni czas [sekundy]',
                     data: [
                         {{time_roberts}},
                         {{time_prewitt}},
@@ -117,7 +117,7 @@
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                return tooltipItem.raw.toFixed(5) + " sec/pixel";
+                                return tooltipItem.raw.toFixed(5) + " sec";
                             }
                         }
                     }

@@ -41,37 +41,18 @@ def generate_gallery(results: list[ImageResult]):
         image_rows += row_html
     return image_rows
 
-def normalize_times(results: list[ImageResult]) -> list[dict]:
-    normalized_results = []
 
-    for result in results:
-        num_pixels = result.width * result.height
-
-        normalized_result = {
-            "id": result.id,
-            "time_roberts": result.time_roberts / num_pixels,
-            "time_prewitt": result.time_prewitt / num_pixels,
-            "time_sobel": result.time_sobel / num_pixels,
-            "time_robinson": result.time_robinson / num_pixels,
-            "time_laplace": result.time_laplace / num_pixels,
-            "time_canny": result.time_canny / num_pixels
-        }
-
-        normalized_results.append(normalized_result)
-
-    return normalized_results
-
-def generate_average_times(results: list[ImageResult]) -> dict:
-    normalized_results = normalize_times(results)
-
-    return {
-        'time_roberts': sum([r["time_roberts"] for r in normalized_results]) / len(normalized_results),
-        'time_prewitt': sum([r["time_prewitt"] for r in normalized_results]) / len(normalized_results),
-        'time_sobel': sum([r["time_sobel"] for r in normalized_results]) / len(normalized_results),
-        'time_robinson': sum([r["time_robinson"] for r in normalized_results]) / len(normalized_results),
-        'time_laplace': sum([r["time_laplace"] for r in normalized_results]) / len(normalized_results),
-        'time_canny': sum([r["time_canny"] for r in normalized_results]) / len(normalized_results)
+def calculate_average_times(results: list[ImageResult]) -> dict:
+    average_results = {
+        'time_roberts': sum([r.time_roberts for r in results]) / len(results),
+        'time_prewitt': sum([r.time_prewitt for r in results]) / len(results),
+        'time_sobel': sum([r.time_sobel for r in results]) / len(results),
+        'time_robinson': sum([r.time_robinson for r in results]) / len(results),
+        'time_laplace': sum([r.time_laplace for r in results]) / len(results),
+        'time_canny': sum([r.time_canny for r in results]) / len(results)
     }
+
+    return average_results
 
 def generate_results_html(results: list[ImageResult]):
     with open(GALLERY_TEMPLATE_FILE, 'r', encoding="utf-8") as template_file:
@@ -80,7 +61,7 @@ def generate_results_html(results: list[ImageResult]):
     gallery = generate_gallery(results)
     html_content = html_template.replace("{{gallery}}", gallery)
 
-    avg_times = generate_average_times(results)
+    avg_times = calculate_average_times(results)
     html_content = html_content.replace("{{time_roberts}}", str(avg_times['time_roberts']))
     html_content = html_content.replace("{{time_prewitt}}", str(avg_times['time_prewitt']))
     html_content = html_content.replace("{{time_sobel}}", str(avg_times['time_sobel']))
